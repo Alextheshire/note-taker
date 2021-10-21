@@ -18,8 +18,35 @@ app.get('/notes',(req,res) =>
 app.get('/api/notes',(req,res) => 
     res.json(db))
 
-app.post('./api/notes',(req,res) => {
+app.post('/api/notes',(req,res) => {
+    const id = uuidv4()
+    const {title,text} = req.body
+    if(req.body) {
+        const newNote = {
+            title,
+            text,
+            id
+        }
+        db.push(newNote);
+        fs.writeFileSync('./db/db.json', JSON.stringify(db,null,4))
+        res.json('Success')
+    } else {
+        res.error('Error in adding note');
 
+    }
+})
+
+app.delete('/api/notes/:noteId',(req,res) => {{
+
+    for (i=0; i<db.length; i++) {
+        if(db[i].id == req.params.noteId) {
+            db.splice(i,1)
+            fs.writeFileSync('./db/db.json', JSON.stringify(db,null,4))
+            return res.json('Success')
+        }
+    }
+    res.error("No note found with that ID")
+}
 })
 
 app.get('*',(req,res) => 
